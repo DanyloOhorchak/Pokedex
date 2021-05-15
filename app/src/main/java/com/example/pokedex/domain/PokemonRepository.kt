@@ -1,8 +1,13 @@
 package com.example.pokedex.domain
 
-import com.example.pokedex.domain.PokemonEntity
+import io.reactivex.rxjava3.core.Single
 
 interface PokemonRepository {
-    fun getPokemonList():List<PokemonEntity>
-    fun addNewPokemon(pokemon: PokemonEntity)
+    fun getPokemonList(): Single<List<PokemonEntity>>
+    fun getPokemonById(id: String):Single<PokemonEntity>
+}
+
+interface RepositoryCallback<T> {
+    fun onSuccess(data: T)
+    fun onError(error: String)
 }
