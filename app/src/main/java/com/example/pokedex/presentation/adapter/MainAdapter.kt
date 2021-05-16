@@ -1,36 +1,37 @@
-package com.example.pokedex.presentation
+package com.example.pokedex.presentation.adapter
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.ColorInt
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.FutureTarget
 import com.bumptech.glide.request.target.BitmapImageViewTarget
-import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.pokedex.R
-import java.net.URI
-import java.net.URL
+import com.example.pokedex.presentation.Displayable
+import com.example.pokedex.presentation.HeaderItem
+import com.example.pokedex.presentation.PokemonItem
+import com.example.pokedex.presentation.adapter.StylingInstrumens.darkenColor
+import com.example.pokedex.presentation.adapter.StylingInstrumens.isBrightColor
 
 
 private const val ITEM_TYPE_UNKNOWN = 0
 private const val ITEM_TYPE_POKEMON = 1
 private const val ITEM_TYPE_HEADER = 2
 
-class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MainAdapter(private val onItemClicked: (id: String) -> Unit) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var items: MutableList<Displayable> = emptyList<Displayable>().toMutableList()
+
 
     fun setPokemonList(pokemons: List<Displayable>) {
         items.clear()
@@ -43,7 +44,7 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             ITEM_TYPE_POKEMON -> {
                 val view =
                     LayoutInflater.from(parent.context).inflate(R.layout.main_item, parent, false)
-                PokemonViewHolder(view)
+                PokemonViewHolder(view, onItemClicked)
             }
             ITEM_TYPE_HEADER -> {
                 val view =
@@ -82,16 +83,18 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    class PokemonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class PokemonViewHolder(view: View, val onItemClicked: (id: String) -> Unit) :
+        RecyclerView.ViewHolder(
+            view
+        ) {
 
         private val textView = itemView.findViewById<TextView>(R.id.name)
-        private val imageView = itemView.findViewById<ImageView>(R.id.imagePreview)
+        private val imageView = itemView.findViewById<ImageView>(R.id.pokemonImage)
         private val card = itemView.findViewById<CardView>(R.id.pokemonCard)
 
         fun bind(item: PokemonItem) {
             textView.text = item.name.capitalize()
             Glide.with(imageView.context)
-                .asBitmap()
                 .load(item.image)
                 .into(imageView)
 
@@ -106,30 +109,24 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                         super.onResourceReady(resource, transition)
                         Palette.generateAsync(resource, object : Palette.PaletteAsyncListener {
                             override fun onGenerated(palette: Palette?) {
-                                val swatch = if(palette != null) palette.vibrantSwatch else Palette.Swatch(1,1)
-                                card.setCardBackgroundColor(darkenColor(swatch!!.rgb))
+                                val swatch =
+                                    if (palette != null) palette.vibrantSwatch else Palette.Swatch(
+                                        1,
+                                        1
+                                    )
+                                if(swatch != null) {
+                                    card.setCardBackgroundColor(darkenColor(swatch!!.rgb))
+                                }
                             }
                         })
                     }
                 })
+            itemView.setOnClickListener {
+                onItemClicked(item.id)
+            }
 
-//            bitmap?.let {
-//                Palette.from(bitmap).generate(object : Palette.PaletteAsyncListener {
-//                    override fun onGenerated(palette: Palette?) {
-//                        val swatch: Palette.Swatch = palette!!.vibrantSwatch!!
-//                        if (swatch != null) {
-//                            card.setCardBackgroundColor(swatch.rgb)
-//                        }
-//                    }
-//                })
         }
 
-        fun darkenColor(color: Int): Int {
-            return Color.HSVToColor(FloatArray(3).apply {
-                Color.colorToHSV(color, this)
-                this[2] *= 0.8f
-            })
-        }
     }
 
     class HeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -139,6 +136,31 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
+}
+
+object StylingInstrumens {
+    fun darkenColor(color: Int): Int {
+        return Color.HSVToColor(FloatArray(3).apply {
+            Color.colorToHSV(color, this)
+            this[2] *= 0.8f
+        })
+    }
+
+    fun isBrightColor(color: Int): Boolean {
+        if (android.R.color.transparent == color) return true
+        var rtnValue = false
+        val rgb = intArrayOf(Color.red(color), Color.green(color), Color.blue(color))
+        val brightness = Math.sqrt(
+            rgb[0] * rgb[0] * .241 + (rgb[1]
+                    * rgb[1] * .691) + rgb[2] * rgb[2] * .068
+        ).toInt()
+
+        // color is light
+        if (brightness >= 200) {
+            rtnValue = true
+        }
+        return rtnValue
+    }
 }
 
 

@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.pokedex.data.NetworkPokemonRepository
 import com.example.pokedex.data.createPokemonService
+import com.example.pokedex.di.Injector
 import com.example.pokedex.domain.RepositoryCallback
 import com.example.pokedex.domain.PokemonEntity
 import com.example.pokedex.domain.PokemonRepository
@@ -14,30 +15,28 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class MainViewModel : ViewModel() {
-    private val repository: PokemonRepository = NetworkPokemonRepository(createPokemonService())
+    private val repository: PokemonRepository = Injector.getPokemonRepository()
     private var disposable: Disposable? = null
-    private val _pokemonListLiveData = MutableLiveData<List<Displayable>>()
-    fun getPokemonList(): LiveData<List<Displayable>> = _pokemonListLiveData
 
+    private val viewStateLiveData = MutableLiveData<MainViewState>()
+    fun viewState(): LiveData<MainViewState> = viewStateLiveData
 
     fun loadData() {
-        disposable = repository.getPokemonList()
+        viewStateLiveData.value = MainViewState.LoadingState
+
+        disposable = repository.getPokemonList().map { it.map { it.toItem() } }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe( {showData(it)}, { Log.d("ViewModel", "Error is", it) })
+            .subscribe(
+                { viewStateLiveData.value = MainViewState.ContentState(it) },
+                {
+                    Log.d("ViewModel", "Error is", it)
+                    viewStateLiveData.value = MainViewState.ErrorState("Unable to load data")
+                })
     }
 
-    private fun showData(pokemons: List<PokemonEntity>) {
-
-
-        val displayableList = pokemons.map { it.toItem() }
-
-        _pokemonListLiveData.postValue(displayableList)
+    override fun onCleared() {
+        super.onCleared()
+        disposable?.dispose()
     }
-
-    private fun PokemonEntity.toItem(): PokemonItem =
-        PokemonItem(id, name, image)
-
-    private fun List<PokemonEntity>.genFilterAndToItemConverter(generation: Int) =
-        this.filter { it.generation == generation }.map { it.toItem() }
 }

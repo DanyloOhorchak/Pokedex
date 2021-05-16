@@ -22,7 +22,7 @@ fun createPokemonService(): PokemonService {
 interface PokemonService {
     @GET("pokemon")
     fun fetchPokemonList(
-        @Query("limit") limit: Int = 20,
+        @Query("limit") limit: Int = 100,
         @Query("offset") offset: Int = 0
     ): Single<PokemonListResponse>
 
