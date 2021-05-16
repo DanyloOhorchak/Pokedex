@@ -10,6 +10,7 @@ import com.example.pokedex.R
 import com.example.pokedex.domain.PokemonEntity
 import com.example.pokedex.presentation.MainAdapter
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         viewModel.loadData()
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = GridLayoutManager(this,2)
         recyclerView.adapter = adapter
 
     }

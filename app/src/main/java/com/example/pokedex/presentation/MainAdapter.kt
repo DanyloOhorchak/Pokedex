@@ -1,19 +1,28 @@
 package com.example.pokedex.presentation
 
-import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.util.Log
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.cardview.widget.CardView
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.FutureTarget
+import com.bumptech.glide.request.target.BitmapImageViewTarget
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.pokedex.R
-import com.example.pokedex.domain.PokemonEntity
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
-import java.lang.IllegalStateException
+import java.net.URI
+import java.net.URL
+
 
 private const val ITEM_TYPE_UNKNOWN = 0
 private const val ITEM_TYPE_POKEMON = 1
@@ -73,49 +82,55 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-
-    class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val textView = itemView.findViewById<TextView>(R.id.name)
-        private val imagePreview = itemView.findViewById<ImageView>(R.id.imagePreview)
-
-        fun bind(item: PokemonEntity) {
-            textView.text = item.name
-            Picasso.get().load(item.image).into(imagePreview, object : Callback {
-                override fun onSuccess() {
-                    Log.d("", "Loaded image")
-                }
-
-                override fun onError(e: Exception?) {
-                    Log.d("", "Loaded image", e)
-                }
-            })
-        }
-    }
-
     class PokemonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         private val textView = itemView.findViewById<TextView>(R.id.name)
-        private val imagePreview = itemView.findViewById<ImageView>(R.id.imagePreview)
+        private val imageView = itemView.findViewById<ImageView>(R.id.imagePreview)
+        private val card = itemView.findViewById<CardView>(R.id.pokemonCard)
 
         fun bind(item: PokemonItem) {
-            textView.text = item.name
-            if (item.useColor) {
-                textView.setTextColor(Color.GREEN)
-            } else {
-                textView.setTextColor(Color.BLACK)
-            }
-            Picasso.get().load(item.image).into(imagePreview, object : Callback {
-                override fun onSuccess() {
-                    Log.d("", "Loaded image")
-                }
+            textView.text = item.name.capitalize()
+            Glide.with(imageView.context)
+                .asBitmap()
+                .load(item.image)
+                .into(imageView)
 
-                override fun onError(e: Exception?) {
-                    Log.d("", "Loaded image", e)
-                }
+            Glide.with(imageView.context)
+                .asBitmap()
+                .load(item.image)
+                .into(object : BitmapImageViewTarget(imageView) {
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        transition: Transition<in Bitmap>?
+                    ) {
+                        super.onResourceReady(resource, transition)
+                        Palette.generateAsync(resource, object : Palette.PaletteAsyncListener {
+                            override fun onGenerated(palette: Palette?) {
+                                val swatch = if(palette != null) palette.vibrantSwatch else Palette.Swatch(1,1)
+                                card.setCardBackgroundColor(darkenColor(swatch!!.rgb))
+                            }
+                        })
+                    }
+                })
+
+//            bitmap?.let {
+//                Palette.from(bitmap).generate(object : Palette.PaletteAsyncListener {
+//                    override fun onGenerated(palette: Palette?) {
+//                        val swatch: Palette.Swatch = palette!!.vibrantSwatch!!
+//                        if (swatch != null) {
+//                            card.setCardBackgroundColor(swatch.rgb)
+//                        }
+//                    }
+//                })
+        }
+
+        fun darkenColor(color: Int): Int {
+            return Color.HSVToColor(FloatArray(3).apply {
+                Color.colorToHSV(color, this)
+                this[2] *= 0.8f
             })
         }
     }
-
 
     class HeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val header = itemView.findViewById<TextView>(R.id.headerText)
@@ -123,5 +138,10 @@ class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             header.text = item.text
         }
     }
+
 }
+
+
+
+
 

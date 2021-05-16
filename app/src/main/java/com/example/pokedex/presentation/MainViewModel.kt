@@ -28,21 +28,9 @@ class MainViewModel : ViewModel() {
     }
 
     private fun showData(pokemons: List<PokemonEntity>) {
-        val gen0 = pokemons.genFilterAndToItemConverter(0)
-        val gen1 = pokemons.genFilterAndToItemConverter(1)
-        val gen2 = pokemons.genFilterAndToItemConverter(2)
-        val gen3 = pokemons.genFilterAndToItemConverter(3)
 
-        val displayableList = mutableListOf<Displayable>()
 
-        displayableList.add(HeaderItem("GENERATION ZER0"))
-        displayableList.addAll(gen0)
-        displayableList.add(HeaderItem("GENERATION ONE"))
-        displayableList.addAll(gen1)
-        displayableList.add(HeaderItem("GENERATION TWO"))
-        displayableList.addAll(gen2)
-        displayableList.add(HeaderItem("GENERATION THREE"))
-        displayableList.addAll(gen3)
+        val displayableList = pokemons.map { it.toItem() }
 
         _pokemonListLiveData.postValue(displayableList)
     }
