@@ -16,7 +16,6 @@ fun createPokemonService(): PokemonService {
 }
 
 interface PokemonService {
-
     @GET("pokemon")
     suspend fun fetchPokemonList(
         @Query("limit") limit: Int = 25,
