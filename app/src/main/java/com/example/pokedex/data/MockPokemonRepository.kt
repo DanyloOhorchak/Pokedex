@@ -1,9 +1,9 @@
 package com.example.pokedex.data
 
-import com.example.pokedex.domain.RepositoryCallback
+import com.example.pokedex.domain.Result
 import com.example.pokedex.domain.PokemonEntity
 import com.example.pokedex.domain.PokemonRepository
-import io.reactivex.rxjava3.core.Single
+import java.lang.Exception
 
 class MockPokemonRepository : PokemonRepository {
     val items = mutableListOf<PokemonEntity>(
@@ -18,13 +18,12 @@ class MockPokemonRepository : PokemonRepository {
         PokemonEntity("9", "blastoise", getImageByID(9), 3),
         PokemonEntity("10", "caterpie", getImageByID(10), 3)
     )
-    override fun getPokemonList(): Single<List<PokemonEntity>> = Single.just(items)
+    override suspend fun getPokemonList(): Result<List<PokemonEntity>> = Result.Success(items)
 
-    override fun getPokemonById(id: String): Single<PokemonEntity> {
+    override suspend fun getPokemonById(id: String): Result<PokemonEntity> {
         val item = items.find { it.id == id }
-        return if (item != null) Single.just(item) else Single.error(Throwable("No pokemon with such id"))
+        return if (item != null) Result.Success(item) else Result.Error(Exception("No pokemon with such id"))
     }
-
     fun getImageByID(id: Int): String =
         "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png"
 }

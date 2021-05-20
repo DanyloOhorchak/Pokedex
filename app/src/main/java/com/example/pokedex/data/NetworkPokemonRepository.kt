@@ -1,37 +1,47 @@
 package com.example.pokedex.data
 
-import android.location.GnssMeasurementsEvent
-import com.example.pokedex.domain.RepositoryCallback
+
+import com.example.pokedex.domain.Result
 import com.example.pokedex.domain.PokemonEntity
 import com.example.pokedex.domain.PokemonRepository
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class NetworkPokemonRepository(val api: PokemonService) : PokemonRepository {
 
 
-    override fun getPokemonList(): Single<List<PokemonEntity>> = api.fetchPokemonList()
-        .flatMap { pokemonList ->
-            Observable.fromIterable(pokemonList.results)
-                .flatMapSingle { getPokemonById(it.name) }.toList()
+    override suspend fun getPokemonList(): Result<List<PokemonEntity>> =
+        withContext(Dispatchers.IO) {
+            try {
+                val ids = api.fetchPokemonList().results.map { it.name }
+                val pokemonDetailedList = api.fetchPokemonList().results.map { it.name }
+                    .map { api.fetchPokemonDetails(it).toEntity() }
+                Result.Success(pokemonDetailedList)
+            } catch (exception: Exception) {
+                Result.Error(exception)
+            }
         }
 
 
-    override fun getPokemonById(id: String): Single<PokemonEntity> = api.fetchPokemonInfo(id).map { pokemon ->
-        val abilities = pokemon.abilities.map { it.ability.name }
+    override suspend fun getPokemonById(id: String): Result<PokemonEntity> =
+        withContext(Dispatchers.IO) {
+            try {
+                val entity = api.fetchPokemonDetails(id).toEntity()
+                Result.Success(entity)
+            } catch (exception: Exception) {
+                Result.Error(exception)
+            }
+        }
 
+    private fun DetailedPokemonResponse.toEntity() =
         PokemonEntity(
-            id = pokemon.id,
-            name = pokemon.name,
-            image = getImageById(pokemon.id),
-            abilities = abilities
-        )
-    }
+            id = id,
+            name = name,
+            image = getImageById(id),
+            abilities = abilities.map { it.ability.name })
 
-    fun getImageById(id: String): String = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png"
+    private fun getImageById(id: String): String =
+        "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png"
 }
 
 

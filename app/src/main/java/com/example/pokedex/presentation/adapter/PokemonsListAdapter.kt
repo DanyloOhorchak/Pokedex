@@ -2,14 +2,12 @@ package com.example.pokedex.presentation.adapter
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -20,14 +18,13 @@ import com.example.pokedex.presentation.Displayable
 import com.example.pokedex.presentation.HeaderItem
 import com.example.pokedex.presentation.PokemonItem
 import com.example.pokedex.presentation.adapter.StylingInstrumens.darkenColor
-import com.example.pokedex.presentation.adapter.StylingInstrumens.isBrightColor
 
 
 private const val ITEM_TYPE_UNKNOWN = 0
 private const val ITEM_TYPE_POKEMON = 1
 private const val ITEM_TYPE_HEADER = 2
 
-class MainAdapter(private val onItemClicked: (id: String) -> Unit) :
+class PokemonsListAdapter(private val onItemClicked: (id: String) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var items: MutableList<Displayable> = emptyList<Displayable>().toMutableList()
@@ -95,10 +92,6 @@ class MainAdapter(private val onItemClicked: (id: String) -> Unit) :
         fun bind(item: PokemonItem) {
             textView.text = item.name.capitalize()
             Glide.with(imageView.context)
-                .load(item.image)
-                .into(imageView)
-
-            Glide.with(imageView.context)
                 .asBitmap()
                 .load(item.image)
                 .into(object : BitmapImageViewTarget(imageView) {
@@ -107,18 +100,12 @@ class MainAdapter(private val onItemClicked: (id: String) -> Unit) :
                         transition: Transition<in Bitmap>?
                     ) {
                         super.onResourceReady(resource, transition)
-                        Palette.generateAsync(resource, object : Palette.PaletteAsyncListener {
-                            override fun onGenerated(palette: Palette?) {
-                                val swatch =
-                                    if (palette != null) palette.vibrantSwatch else Palette.Swatch(
-                                        1,
-                                        1
-                                    )
-                                if(swatch != null) {
+                        Palette.from(resource).generate { palette ->
+                            val swatch = if (palette != null) palette.vibrantSwatch else Palette.Swatch(1, 1)
+                            if(swatch != null) {
                                     card.setCardBackgroundColor(darkenColor(swatch!!.rgb))
                                 }
-                            }
-                        })
+                        }
                     }
                 })
             itemView.setOnClickListener {
