@@ -101,7 +101,7 @@ class PokemonsListAdapter(private val onItemClicked: (id: String) -> Unit) :
                     ) {
                         super.onResourceReady(resource, transition)
                         Palette.from(resource).generate { palette ->
-                            val swatch = if (palette != null) palette.vibrantSwatch else Palette.Swatch(1, 1)
+                            val swatch = palette?.vibrantSwatch
                             if(swatch != null) {
                                     card.setCardBackgroundColor(darkenColor(swatch!!.rgb))
                                 }

@@ -101,8 +101,7 @@ class PokemonDetailsFragment : Fragment(R.layout.fragment_pokemon_details) {
                 ) {
                     super.onResourceReady(resource, transition)
                     Palette.from(resource).generate { palette ->
-                        val swatch =
-                            if (palette != null) palette.vibrantSwatch else Palette.Swatch(1, 1)
+                        val swatch = palette?.vibrantSwatch
                         var rgbColor = ContextCompat.getColor(imageView.context, R.color.teal_main)
                         if (swatch != null) {
                             rgbColor = swatch.rgb
