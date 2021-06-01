@@ -1,11 +1,9 @@
 package com.example.pokedex.presentation.homescreen
 
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -16,9 +14,10 @@ import com.example.pokedex.R
 import com.example.pokedex.presentation.Displayable
 import com.example.pokedex.presentation.adapter.PokemonsListAdapter
 import com.example.pokedex.presentation.details.PokemonDetailsFragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PokemonsListFragment : Fragment(R.layout.fragment_pokemons_list) {
-    private val viewModel: PokemonsListViewModel = PokemonsListViewModel()
+    private val viewModel: PokemonsListViewModel by viewModel()
     private var adapter: PokemonsListAdapter? = null
 
 
@@ -30,7 +29,7 @@ class PokemonsListFragment : Fragment(R.layout.fragment_pokemons_list) {
             R.color.teal_main
         )))
         createRecyclerView()
-        viewModel.viewState().observe(this, Observer {
+        viewModel.viewState().observe(viewLifecycleOwner, Observer {
             when (it) {
                 is PokemonsListViewState.LoadingState -> {
                     showProgress()
@@ -44,7 +43,7 @@ class PokemonsListFragment : Fragment(R.layout.fragment_pokemons_list) {
                 }
             }
         })
-        viewModel.loadData()
+        viewModel.fetch()
     }
 
 
@@ -63,7 +62,7 @@ class PokemonsListFragment : Fragment(R.layout.fragment_pokemons_list) {
         )
         val recyclerView = view?.findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView?.layoutManager =
-            GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
+            GridLayoutManager(context, 2)
         recyclerView?.adapter = adapter
     }
 

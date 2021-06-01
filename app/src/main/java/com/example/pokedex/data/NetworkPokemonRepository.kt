@@ -5,6 +5,7 @@ import com.example.pokedex.domain.Result
 import com.example.pokedex.domain.PokemonEntity
 import com.example.pokedex.domain.PokemonRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class NetworkPokemonRepository(val api: PokemonService) : PokemonRepository {
@@ -14,7 +15,7 @@ class NetworkPokemonRepository(val api: PokemonService) : PokemonRepository {
         withContext(Dispatchers.IO) {
             try {
                 val ids = api.fetchPokemonList().results.map { it.name }
-                val pokemonDetailedList = api.fetchPokemonList().results.map { it.name }
+                val pokemonDetailedList = ids
                     .map { api.fetchPokemonDetails(it).toEntity() }
                 Result.Success(pokemonDetailedList)
             } catch (exception: Exception) {
@@ -25,6 +26,7 @@ class NetworkPokemonRepository(val api: PokemonService) : PokemonRepository {
 
     override suspend fun getPokemonById(id: String): Result<PokemonEntity> =
         withContext(Dispatchers.IO) {
+            delay(2000)
             try {
                 val entity = api.fetchPokemonDetails(id).toEntity()
                 Result.Success(entity)

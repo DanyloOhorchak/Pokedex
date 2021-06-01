@@ -1,19 +1,9 @@
 package com.example.pokedex.data
 
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-
-fun createPokemonService(): PokemonService {
-    val retrofit = Retrofit.Builder()
-        .baseUrl("https://pokeapi.co/api/v2/")
-        .addConverterFactory(MoshiConverterFactory.create())
-        .build()
-    return retrofit.create(PokemonService::class.java)
-}
 
 interface PokemonService {
     @GET("pokemon")
@@ -23,7 +13,6 @@ interface PokemonService {
     ): PokemonListResponse
 
     @GET("pokemon/{name}")
-//    fun fetchPokemonInfo(@Path("name") name: String): Single<DetailedPokemonResponse>
     suspend fun fetchPokemonDetails(@Path("name") name: String): DetailedPokemonResponse
 }
 

@@ -4,24 +4,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pokedex.data.NetworkPokemonRepository
-import com.example.pokedex.data.createPokemonService
 import com.example.pokedex.domain.PokemonEntity
+import com.example.pokedex.domain.PokemonRepository
 import com.example.pokedex.domain.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class PokemonDetailsViewModel : ViewModel() {
-    private val repository = NetworkPokemonRepository(createPokemonService())
+class PokemonDetailsViewModel(private val repository: PokemonRepository, private val id: String) : ViewModel() {
     private val viewStateLiveData = MutableLiveData<PokemonDetailsViewState>()
-
     fun viewState(): LiveData<PokemonDetailsViewState> = viewStateLiveData
 
-    fun loadPokemonById(id: String) {
+    fun fetch() {
         viewStateLiveData.value = PokemonDetailsViewState.LoadingState
 
         viewModelScope.launch {
-            delay(2000)
             viewStateLiveData.value = when (val result = repository.getPokemonById(id)) {
                 is Result.Success -> {
                     result.data.toDataViewState()

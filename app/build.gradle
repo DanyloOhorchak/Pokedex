@@ -63,6 +63,30 @@ dependencies {
     //Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
 
+
+    //Lottie
+    implementation "com.airbnb.android:lottie:3.6.1"
+
+    // ViewBinding-ktx
+    implementation 'com.github.kirich1409:viewbindingpropertydelegate:1.4.6'
+
+    // Koin
+    // Koin for Android
+    def koin_version= "3.0.1"
+    // Koin main features for Android (Scope,ViewModel ...)
+    implementation "io.insert-koin:koin-android:$koin_version"
+    // Koin Android - experimental builder extensions
+    implementation "io.insert-koin:koin-android-ext:$koin_version"
+    // Koin for Jetpack WorkManager
+//    implementation "io.insert-koin:koin-androidx-workmanager:$koin_version"
+    // Koin for Jetpack Compose (unstable version)
+//    implementation "io.insert-koin:koin-androidx-compose:$koin_version"
+    // Koin for Testing
+    testImplementation "io.insert-koin:koin-test:$koin_version"
+
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.4.30")
+
+
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

@@ -25,9 +25,10 @@ import com.bumptech.glide.request.transition.Transition
 import com.example.pokedex.R
 import com.example.pokedex.presentation.adapter.StylingInstrumens
 import com.example.pokedex.presentation.adapter.StylingInstrumens.darkenColor
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PokemonDetailsFragment : Fragment(R.layout.fragment_pokemon_details) {
-    private val viewModel = PokemonDetailsViewModel()
+    private val viewModel:PokemonDetailsViewModel by viewModel()
 
     companion object {
         private const val PARAM_POKEMON_ID = "Pockemon_Id"
@@ -53,13 +54,13 @@ class PokemonDetailsFragment : Fragment(R.layout.fragment_pokemon_details) {
     }
 
     private fun loadPokemonData(view: View, id: String) {
-        viewModel.loadPokemonById(id)
+        viewModel.fetch()
 
         val progressBar = view.findViewById<ProgressBar>(R.id.progress)
         val contentView = view.findViewById<View>(R.id.content_group)
         val errorView = view.findViewById<TextView>(R.id.error_text)
 
-        viewModel.viewState().observe(this, Observer {
+        viewModel.viewState().observe(viewLifecycleOwner, Observer {
             when (it) {
                 is PokemonDetailsViewState.LoadingState -> {
                     progressBar.isVisible = true
