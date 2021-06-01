@@ -26,9 +26,14 @@ import com.example.pokedex.R
 import com.example.pokedex.presentation.adapter.StylingInstrumens
 import com.example.pokedex.presentation.adapter.StylingInstrumens.darkenColor
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class PokemonDetailsFragment : Fragment(R.layout.fragment_pokemon_details) {
-    private val viewModel:PokemonDetailsViewModel by viewModel()
+    private val id: String by lazy {
+        arguments?.getString(PARAM_POKEMON_ID) ?: ""
+    }
+    private val viewModel:PokemonDetailsViewModel by viewModel{ parametersOf(id)}
+
 
     companion object {
         private const val PARAM_POKEMON_ID = "Pockemon_Id"
@@ -47,13 +52,13 @@ class PokemonDetailsFragment : Fragment(R.layout.fragment_pokemon_details) {
         val id = arguments?.getString(PARAM_POKEMON_ID)
 
         if (id != null) {
-            loadPokemonData(view, id)
+            loadPokemonData(view)
         } else {
             Log.d("TAG", "Invalid pokemon id")
         }
     }
 
-    private fun loadPokemonData(view: View, id: String) {
+    private fun loadPokemonData(view: View) {
         viewModel.fetch()
 
         val progressBar = view.findViewById<ProgressBar>(R.id.progress)
