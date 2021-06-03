@@ -18,7 +18,7 @@ class PokemonsListViewModel(private val repository: PokemonRepository) : ViewMod
         viewStateLiveData.value = PokemonsListViewState.LoadingState
 
         viewModelScope.launch {
-            viewStateLiveData.value = when (val result = repository.getPokemonList()) {
+            viewStateLiveData.value = when (val result = repository.getPokemonList(0)) {
                 is Result.Success -> {
                     PokemonsListViewState.ContentState(result.data.map {it.toItem()})
                 }

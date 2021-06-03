@@ -18,7 +18,7 @@ class MockPokemonRepository : PokemonRepository {
         PokemonEntity("9", "blastoise", getImageByID(9), 3),
         PokemonEntity("10", "caterpie", getImageByID(10), 3)
     )
-    override suspend fun getPokemonList(): Result<List<PokemonEntity>> = Result.Success(items)
+    override suspend fun getPokemonList(offset: Int): Result<List<PokemonEntity>> = Result.Success(items)
 
     override suspend fun getPokemonById(id: String): Result<PokemonEntity> {
         val item = items.find { it.id == id }

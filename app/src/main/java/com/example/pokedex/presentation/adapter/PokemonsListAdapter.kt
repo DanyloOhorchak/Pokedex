@@ -1,23 +1,17 @@
 package com.example.pokedex.presentation.adapter
 
-import android.graphics.Bitmap
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.BitmapImageViewTarget
-import com.bumptech.glide.request.transition.Transition
 import com.example.pokedex.R
+import com.example.pokedex.colorListItems
 import com.example.pokedex.presentation.Displayable
 import com.example.pokedex.presentation.HeaderItem
 import com.example.pokedex.presentation.PokemonItem
-import com.example.pokedex.presentation.adapter.StylingInstrumens.darkenColor
 
 
 private const val ITEM_TYPE_UNKNOWN = 0
@@ -91,23 +85,24 @@ class PokemonsListAdapter(private val onItemClicked: (id: String) -> Unit) :
 
         fun bind(item: PokemonItem) {
             textView.text = item.name.capitalize()
-            Glide.with(imageView.context)
-                .asBitmap()
-                .load(item.image)
-                .into(object : BitmapImageViewTarget(imageView) {
-                    override fun onResourceReady(
-                        resource: Bitmap,
-                        transition: Transition<in Bitmap>?
-                    ) {
-                        super.onResourceReady(resource, transition)
-                        Palette.from(resource).generate { palette ->
-                            val swatch = palette?.vibrantSwatch
-                            if(swatch != null) {
-                                    card.setCardBackgroundColor(darkenColor(swatch!!.rgb))
-                                }
-                        }
-                    }
-                })
+//            Glide.with(imageView.context)
+//                .asBitmap()
+//                .load(item.image)
+//                .into(object : BitmapImageViewTarget(imageView) {
+//                    override fun onResourceReady(
+//                        resource: Bitmap,
+//                        transition: Transition<in Bitmap>?
+//                    ) {
+//                        super.onResourceReady(resource, transition)
+//                        Palette.from(resource).generate { palette ->
+//                            val swatch = palette?.vibrantSwatch
+//                            if(swatch != null) {
+//                                    card.setCardBackgroundColor(darkenColor(swatch.rgb))
+//                                }
+//                        }
+//                    }
+//                })
+            colorListItems(imageView, item.image, card)
             itemView.setOnClickListener {
                 onItemClicked(item.id)
             }
@@ -125,30 +120,30 @@ class PokemonsListAdapter(private val onItemClicked: (id: String) -> Unit) :
 
 }
 
-object StylingInstrumens {
-    fun darkenColor(color: Int): Int {
-        return Color.HSVToColor(FloatArray(3).apply {
-            Color.colorToHSV(color, this)
-            this[2] *= 0.8f
-        })
-    }
-
-    fun isBrightColor(color: Int): Boolean {
-        if (android.R.color.transparent == color) return true
-        var rtnValue = false
-        val rgb = intArrayOf(Color.red(color), Color.green(color), Color.blue(color))
-        val brightness = Math.sqrt(
-            rgb[0] * rgb[0] * .241 + (rgb[1]
-                    * rgb[1] * .691) + rgb[2] * rgb[2] * .068
-        ).toInt()
-
-        // color is light
-        if (brightness >= 200) {
-            rtnValue = true
-        }
-        return rtnValue
-    }
-}
+//object StylingInstrumens {
+//    fun darkenColor(color: Int): Int {
+//        return Color.HSVToColor(FloatArray(3).apply {
+//            Color.colorToHSV(color, this)
+//            this[2] *= 0.8f
+//        })
+//    }
+//
+//    fun isBrightColor(color: Int): Boolean {
+//        if (android.R.color.transparent == color) return true
+//        var rtnValue = false
+//        val rgb = intArrayOf(Color.red(color), Color.green(color), Color.blue(color))
+//        val brightness = Math.sqrt(
+//            rgb[0] * rgb[0] * .241 + (rgb[1]
+//                    * rgb[1] * .691) + rgb[2] * rgb[2] * .068
+//        ).toInt()
+//
+//        // color is light
+//        if (brightness >= 200) {
+//            rtnValue = true
+//        }
+//        return rtnValue
+//    }
+//}
 
 
 

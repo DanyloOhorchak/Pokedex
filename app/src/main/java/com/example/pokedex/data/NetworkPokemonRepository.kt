@@ -11,10 +11,10 @@ import kotlinx.coroutines.withContext
 class NetworkPokemonRepository(val api: PokemonService) : PokemonRepository {
 
 
-    override suspend fun getPokemonList(): Result<List<PokemonEntity>> =
+    override suspend fun getPokemonList(offset: Int): Result<List<PokemonEntity>> =
         withContext(Dispatchers.IO) {
             try {
-                val ids = api.fetchPokemonList().results.map { it.name }
+                val ids = api.fetchPokemonList(offset = offset).results.map { it.name }
                 val pokemonDetailedList = ids
                     .map { api.fetchPokemonDetails(it).toEntity() }
                 Result.Success(pokemonDetailedList)
