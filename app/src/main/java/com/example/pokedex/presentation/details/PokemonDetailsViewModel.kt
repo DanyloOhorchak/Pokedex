@@ -32,6 +32,10 @@ class PokemonDetailsViewModel(private val repository: PokemonRepository, private
     fun PokemonEntity.toDataViewState() = PokemonDetailsViewState.DataState(
         name = name,
         url = image,
-        abilities = abilities
+        abilities = abilities,
+        stats = stats,
+        types = types,
+        weight = weight,
+        height = height
     )
 }

@@ -1,4 +1,5 @@
 package com.example.pokedex.presentation.details
+
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -74,12 +75,31 @@ class PokemonDetailsFragment : Fragment(R.layout.fragment_pokemon_details) {
     ) {
         val nameTextView = binding.name
         val imageView = binding.image
-        val abilitiesLayout = binding.abilitiesLayout
+        val abilitiesLayout = binding.abilitiestLayout
+        val statsLayout = binding.statsLayout
         val actionBar: ActionBar? = (activity as AppCompatActivity?)!!.supportActionBar
+        val weight = binding.weightNum
+        val height = binding.heightNum
+        val w = binding.weight
+        val h = binding.height
+        height.text = state.height
+        weight.text = state.weight
+        if (state.weight.length > 2 || state.height.length > 2) {
+            weight.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 27.0f)
+            height.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 27.0f)
+        }
+        w.text = "Weight"
+        h.text = "Height"
+        w.bringToFront()
+        h.bringToFront()
+        height.bringToFront()
+        weight.bringToFront()
 
         nameTextView.text = state.name.capitalize()
+
         colorDetailsItem(nameTextView, imageView, state.url, actionBar)
-        state.abilities.forEach() {
+
+        state.abilities.forEach {
             val textView = TextView(context)
             textView.text = it.capitalize()
             val safeContext = context
@@ -87,8 +107,20 @@ class PokemonDetailsFragment : Fragment(R.layout.fragment_pokemon_details) {
                 textView.setTextColor(ContextCompat.getColor(safeContext, R.color.brightTextColor))
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, 50.0f)
             textView.setPadding(0, 10, 0, 0)
-            textView.gravity = Gravity.LEFT
+            textView.gravity = Gravity.CENTER
             abilitiesLayout.addView(textView)
+        }
+
+        state.stats.forEach {
+            val textView = TextView(context)
+            textView.text = it.key + "  -  " + it.value
+            val safeContext = context
+            if (safeContext != null)
+                textView.setTextColor(ContextCompat.getColor(safeContext, R.color.brightTextColor))
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, 50.0f)
+            textView.setPadding(0, 10, 0, 0)
+            textView.gravity = Gravity.CENTER
+            statsLayout.addView(textView)
         }
     }
 }

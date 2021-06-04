@@ -35,12 +35,18 @@ class NetworkPokemonRepository(val api: PokemonService) : PokemonRepository {
             }
         }
 
-    private fun DetailedPokemonResponse.toEntity() =
-        PokemonEntity(
+    private fun DetailedPokemonResponse.toEntity(): PokemonEntity {
+        return PokemonEntity(
             id = id,
             name = name,
             image = getImageById(id),
-            abilities = abilities.map { it.ability.name })
+            abilities = abilities.map { it.ability.name },
+            types = types.map { it.type.name },
+            stats = stats.map { it.stat.name to it.base_stat }.toMap(),
+            weight = weight,
+            height = height
+        )
+    }
 
     private fun getImageById(id: String): String =
         "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png"

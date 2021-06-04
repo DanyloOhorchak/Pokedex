@@ -85,23 +85,6 @@ class PokemonsListAdapter(private val onItemClicked: (id: String) -> Unit) :
 
         fun bind(item: PokemonItem) {
             textView.text = item.name.capitalize()
-//            Glide.with(imageView.context)
-//                .asBitmap()
-//                .load(item.image)
-//                .into(object : BitmapImageViewTarget(imageView) {
-//                    override fun onResourceReady(
-//                        resource: Bitmap,
-//                        transition: Transition<in Bitmap>?
-//                    ) {
-//                        super.onResourceReady(resource, transition)
-//                        Palette.from(resource).generate { palette ->
-//                            val swatch = palette?.vibrantSwatch
-//                            if(swatch != null) {
-//                                    card.setCardBackgroundColor(darkenColor(swatch.rgb))
-//                                }
-//                        }
-//                    }
-//                })
             colorListItems(imageView, item.image, card)
             itemView.setOnClickListener {
                 onItemClicked(item.id)
@@ -119,31 +102,6 @@ class PokemonsListAdapter(private val onItemClicked: (id: String) -> Unit) :
     }
 
 }
-
-//object StylingInstrumens {
-//    fun darkenColor(color: Int): Int {
-//        return Color.HSVToColor(FloatArray(3).apply {
-//            Color.colorToHSV(color, this)
-//            this[2] *= 0.8f
-//        })
-//    }
-//
-//    fun isBrightColor(color: Int): Boolean {
-//        if (android.R.color.transparent == color) return true
-//        var rtnValue = false
-//        val rgb = intArrayOf(Color.red(color), Color.green(color), Color.blue(color))
-//        val brightness = Math.sqrt(
-//            rgb[0] * rgb[0] * .241 + (rgb[1]
-//                    * rgb[1] * .691) + rgb[2] * rgb[2] * .068
-//        ).toInt()
-//
-//        // color is light
-//        if (brightness >= 200) {
-//            rtnValue = true
-//        }
-//        return rtnValue
-//    }
-//}
 
 
 

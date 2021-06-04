@@ -7,16 +7,16 @@ import java.lang.Exception
 
 class MockPokemonRepository : PokemonRepository {
     val items = mutableListOf<PokemonEntity>(
-        PokemonEntity("1", "bulbasaur", getImageByID(1)),
-        PokemonEntity("2", "ivysaur", getImageByID(2)),
-        PokemonEntity("3", "venusaur", getImageByID(3), 1),
-        PokemonEntity("4", "charmander", getImageByID(4), 1),
-        PokemonEntity("5", "charmeleon", getImageByID(5), 2),
-        PokemonEntity("6", "charizard", getImageByID(6), 2),
-        PokemonEntity("7", "squirtle", getImageByID(7), 2),
-        PokemonEntity("8", "wartortle", getImageByID(8), 3),
-        PokemonEntity("9", "blastoise", getImageByID(9), 3),
-        PokemonEntity("10", "caterpie", getImageByID(10), 3)
+        PokemonEntity("1", "bulbasaur", getImageByID(1), weight = "", height = ""),
+        PokemonEntity("2", "ivysaur", getImageByID(2), weight = "", height = ""),
+        PokemonEntity("3", "venusaur", getImageByID(3), 1, weight = "", height = ""),
+        PokemonEntity("4", "charmander", getImageByID(4), 1, weight = "", height = ""),
+        PokemonEntity("5", "charmeleon", getImageByID(5), 2, weight = "", height = ""),
+        PokemonEntity("6", "charizard", getImageByID(6), 2, weight = "", height = ""),
+        PokemonEntity("7", "squirtle", getImageByID(7), 2, weight = "", height = ""),
+        PokemonEntity("8", "wartortle", getImageByID(8), 3, weight = "", height = ""),
+        PokemonEntity("9", "blastoise", getImageByID(9), 3, weight = "", height = ""),
+        PokemonEntity("10", "caterpie", getImageByID(10), 3, weight = "", height = "")
     )
     override suspend fun getPokemonList(offset: Int): Result<List<PokemonEntity>> = Result.Success(items)
 
